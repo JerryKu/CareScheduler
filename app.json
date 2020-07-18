@@ -1,0 +1,12 @@
+{
+  "name": "care-scheduler",
+  "displayName": "care-scheduler",
+  "expo": {
+    "name": "care-scheduler",
+    "slug": "care-scheduler",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
