@@ -18,13 +18,22 @@ import {
   StatusBar,
 } from 'react-native';
 import HeaderBar from '@components/HeaderBar';
+import NotesContainer from '@components/NotesContainer';
 
-import {
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+const notesArray = [
+  {
+    checked: false,
+    text: 'Give medicine',
+    isEditing: false,
+  },
+  {
+    checked: false,
+    text: 'Bathroom',
+    isEditing: false,
+  },
+];
 
 const App = () => {
   return (
@@ -37,31 +46,16 @@ const App = () => {
           <HeaderBar />
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Text>
+              <Text style={styles.sectionTitle}>Who's On Call</Text>
+              <View style={styles.cardContainer}>
+                <Text style={styles.sectionDescription}>Jerry Ku</Text>
+                <Text style={styles.sectionDescription}>7:30PM - 9PM</Text>
+              </View>
             </View>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
+              <Text style={styles.sectionTitle}>Notes</Text>
+              <NotesContainer notes={notesArray} />
             </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -84,13 +78,21 @@ const styles = StyleSheet.create({
     marginTop: 32,
     paddingHorizontal: 24,
   },
+  cardContainer: {
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: 'black',
+    padding: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
     color: Colors.black,
   },
   sectionDescription: {
-    marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
     color: Colors.dark,
