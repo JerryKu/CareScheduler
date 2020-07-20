@@ -16,21 +16,19 @@ class NotesContainer extends Component<NoteContainerProps, State> {
     notesArray: this.props.notes,
   };
 
-  setEditingState = (index: number) => {
+  setEditingState = (index: number, value: boolean) => {
     let { notesArray } = this.state;
-    console.log(index);
     notesArray = notesArray.map((note, currIndex) => {
       return currIndex === index
         ? {
             ...note,
-            isEditing: true,
+            isEditing: value,
           }
         : {
             ...note,
             isEditing: false,
           };
     });
-    console.log(notesArray);
     this.setState({
       notesArray,
     });
@@ -46,7 +44,12 @@ class NotesContainer extends Component<NoteContainerProps, State> {
             key={note.text}
             {...note}
             onFocus={() => {
-              setEditingState(index);
+              setEditingState(index, true);
+              console.log('focus');
+            }}
+            onBlur={() => {
+              setEditingState(index, false);
+              console.log('blur');
             }}
           />
         ))}

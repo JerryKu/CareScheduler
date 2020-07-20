@@ -46,21 +46,34 @@ const App = () => {
           <HeaderBar />
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Who's On Call</Text>
-              <View style={styles.cardContainer}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Who's On Call</Text>
+                <Text style={styles.sectionTitle}>{getCurrentDate()}</Text>
+              </View>
+              <View style={styles.sectionContent}>
                 <Text style={styles.sectionDescription}>Jerry Ku</Text>
                 <Text style={styles.sectionDescription}>7:30PM - 9PM</Text>
               </View>
             </View>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Notes</Text>
-              <NotesContainer notes={notesArray} />
+              <View style={styles.sectionContent}>
+                <NotesContainer notes={notesArray} />
+              </View>
             </View>
           </View>
         </ScrollView>
       </SafeAreaView>
     </>
   );
+};
+
+const getCurrentDate = () => {
+  const day = new Date().getDate();
+  const month = new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+
+  return month + '-' + day + '-' + year;
 };
 
 const styles = StyleSheet.create({
@@ -75,10 +88,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   sectionContainer: {
-    marginTop: 32,
+    marginTop: 26,
     paddingHorizontal: 24,
   },
-  cardContainer: {
+  sectionContent: {
     marginTop: 15,
     borderWidth: 1,
     borderColor: 'black',
@@ -86,6 +99,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  sectionHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   sectionTitle: {
     fontSize: 24,

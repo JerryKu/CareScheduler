@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { bool, string, func } from 'prop-types';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 
-export type NoteProps = {
+export type ShiftProps = {
   checked?: boolean;
   text: string;
   isEditing?: boolean;
@@ -11,27 +10,16 @@ export type NoteProps = {
   onBlur?: Function;
 };
 
-const Note = ({
-  checked,
+const Shift = ({
   text,
   isEditing = false,
   onFocus = () => {},
   onBlur = () => {},
-}: NoteProps) => {
-  const [isChecked, setChecked] = useState(checked);
+}: ShiftProps) => {
   const [currentText, onChangeText] = useState(text);
-  const checkHandler = () => {
-    setChecked(!isChecked);
-  };
 
   return (
     <View style={styles.note}>
-      <CheckBox
-        style={styles.checkBox}
-        value={isChecked}
-        onValueChange={checkHandler}
-        animationDuration={0.25}
-      />
       {isEditing ? (
         <TextInput
           autoFocus
@@ -55,14 +43,14 @@ const Note = ({
   );
 };
 
-Note.propTypes = {
+Shift.propTypes = {
   text: string.isRequired,
   checked: bool.isRequired,
   isEditing: bool,
   onFocus: func,
 };
 
-Note.defaultProps = {
+Shift.defaultProps = {
   isEditing: false,
   onFocus: () => {},
 };
@@ -86,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Note;
+export default Shift;
