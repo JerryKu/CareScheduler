@@ -20,25 +20,13 @@ const Shift = ({
 
   return (
     <View style={styles.note}>
-      {isEditing ? (
-        <TextInput
-          autoFocus
-          style={styles.focusedText}
-          onChangeText={onChangeText}
-          onBlur={() => {
-            onBlur();
-          }}>
-          {currentText}
-        </TextInput>
-      ) : (
-        <Text
-          style={styles.noteText}
-          onPress={() => {
-            onFocus();
-          }}>
-          {currentText}
-        </Text>
-      )}
+      <Text
+        style={styles.noteText}
+        onPress={() => {
+          onFocus();
+        }}>
+        {currentText}
+      </Text>
     </View>
   );
 };

@@ -9,7 +9,6 @@ type ShiftContainerProps = {
 type State = {};
 
 class ShiftsContainer extends Component<ShiftContainerProps, State> {
-  //on any edit, set the notesArray to the new editted NoteList
   state = {};
 
   render() {
