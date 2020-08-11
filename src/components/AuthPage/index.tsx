@@ -7,6 +7,7 @@ import appleAuth, {
   AppleAuthRequestScope,
   AppleAuthCredentialState,
 } from '@invertase/react-native-apple-authentication';
+import { Actions } from 'react-native-router-flux';
 
 const appId = 'carescheduler-ciszu'; // Set Realm app ID here.
 const appConfig = {
@@ -54,10 +55,15 @@ const AuthPage = ({ app }: { app: Realm.App }) => {
         buttonType={AppleButton.Type.SIGN_IN}
         style={styles.appleAuthButton}
         onPress={async () => {
-          const identityToken = await getAppleIdentityToken();
-          const credential = Realm.Credentials.apple(identityToken);
-          const user: Realm.User = await app.logIn(credential);
-          console.log(`Logged in with id: ${user.id}`);
+          try {
+            const identityToken = await getAppleIdentityToken();
+            const credential = Realm.Credentials.apple(identityToken);
+            const user: Realm.User = await app.logIn(credential);
+            Actions.home();
+            console.log(`Logged in with id: ${user.id}`);
+          } catch (e) {
+            console.log(e);
+          }
         }}
       />
     </View>

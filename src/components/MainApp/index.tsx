@@ -17,7 +17,6 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
-import Realm from 'realm';
 import HeaderBar from '@components/HeaderBar';
 import NotesContainer from '@components/NotesContainer';
 import AuthPage from '@components/AuthPage';
@@ -37,13 +36,6 @@ const notesArray = [
   },
 ];
 
-const appId = 'carescheduler-ciszu'; // Set Realm app ID here.
-const appConfig = {
-  id: appId,
-  timeout: 10000,
-};
-const app = new Realm.App(appConfig);
-
 const App = () => {
   return (
     <>
@@ -53,7 +45,6 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <HeaderBar />
-          <AuthPage app={app} />
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
               <View style={styles.sectionHeader}>
