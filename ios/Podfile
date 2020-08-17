@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '13.1'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 def add_flipper_pods!(versions = {})
@@ -76,8 +76,6 @@ target 'CareScheduler' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
-  pod 'RealmJS', :path => '../node_modules/realm'
 
   target 'CareSchedulerTests' do
     inherit! :complete

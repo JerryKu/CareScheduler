@@ -16,10 +16,10 @@ import {
   View,
   Text,
   StatusBar,
+  AsyncStorage,
 } from 'react-native';
 import HeaderBar from '@components/HeaderBar';
 import NotesContainer from '@components/NotesContainer';
-import AuthPage from '@components/AuthPage';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
@@ -36,7 +36,18 @@ const notesArray = [
   },
 ];
 
+const getUserInfo = async () => {
+  try {
+    let userData = await AsyncStorage.getItem('userData');
+    let data = JSON.parse(userData || '{}');
+    console.log(data);
+  } catch (error) {
+    console.log('Something went wrong', error);
+  }
+};
+
 const App = () => {
+  getUserInfo();
   return (
     <>
       <StatusBar barStyle="dark-content" />
