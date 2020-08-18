@@ -10,6 +10,7 @@ import {
 import { getShiftListsByGroupId } from '@apis/apis';
 import { IShiftList } from '@interfaces/Shift';
 import { getGroupId } from '@utils/globalUtils';
+import moment from 'moment';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
@@ -49,8 +50,10 @@ const ShiftListsScreen = () => {
               <View style={styles.sectionContent}>
                 {shiftLists.map((shiftList) => {
                   return (
-                    <View style={styles.shiftList}>
-                      <Text>{`${shiftList.date} Shifts`}</Text>
+                    <View key={shiftList._id} style={styles.shiftList}>
+                      <Text>{`${moment(shiftList.date).format(
+                        'l',
+                      )} Shifts`}</Text>
                     </View>
                   );
                 })}

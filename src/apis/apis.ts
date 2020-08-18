@@ -82,7 +82,26 @@ export const getShiftListsByGroupId = async ({
 }) => {
   try {
     const res = await axios.get(`/ShiftList/group/${groupId}`);
-    console.log(res);
+    if (res.data) {
+      return res.data;
+    } else {
+      throw new Error('Error getting Group By Id');
+    }
+  } catch (e) {
+    console.log(e);
+    return {};
+  }
+};
+
+export const getShiftListByGroupIdAndDate = async ({
+  groupId,
+  date,
+}: {
+  groupId: string;
+  date: string;
+}) => {
+  try {
+    const res = await axios.post(`/ShiftList/group/${groupId}`, { date });
     if (res.data) {
       return res.data;
     } else {

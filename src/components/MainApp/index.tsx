@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 import {
+  Alert,
   SafeAreaView,
   StyleSheet,
   ScrollView,
@@ -17,16 +18,22 @@ import {
   Text,
   StatusBar,
   Button,
+  Modal,
 } from 'react-native';
 import HeaderBar from '@components/HeaderBar';
 import NotesContainer from '@components/NotesContainer';
 import AuthPage from '@components/AuthPage';
+import CalendarPicker from 'react-native-calendar-picker';
+import moment, { Moment } from 'moment';
 import { getUserId, getGroupId } from '@utils/globalUtils';
-import _get from 'lodash/get';
-
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Actions } from 'react-native-router-flux';
-import { getGroupByGroupId, addNewShiftList } from '@apis/apis';
+import {
+  getGroupByGroupId,
+  addNewShiftList,
+  getShiftListByGroupIdAndDate,
+} from '@apis/apis';
+import _isEmpty from 'lodash/isEmpty';
 
 const notesArray = [
   {
@@ -50,20 +57,44 @@ const getCurrentDate = () => {
   return month + '-' + day + '-' + year;
 };
 
-const handleAddNewShiftList = async () => {
-  const groupId = await getGroupId();
-  const date = getCurrentDate();
-  if (groupId) {
-    await addNewShiftList({ date, groupId });
-    Actions.shiftLists();
-  }
-};
-
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [shiftLists, setShiftLists] = useState([]);
-  const [currentShiftList, setCurrentShiftList] = useState({});
+  const [currentShiftList, setCurrentShiftList] = useState([]);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [currentDate, setCurrentDate] = useState(moment().format('l'));
+
+  const handleAddNewShift = async () => {
+    const groupId = await getGroupId();
+    const date = moment().format('l');
+    if (groupId) {
+      // TODO: add new shift
+      await addNewShiftList({ date, groupId });
+    }
+    // TODO: new shift modal
+  };
+
+  const handleDateChange = async (e: Moment) => {
+    const newCurrentDate = moment(e).format('l');
+    const groupId = await getGroupId();
+    if (groupId) {
+      const selectedShiftList = await getShiftListByGroupIdAndDate({
+        groupId,
+        date: newCurrentDate,
+      });
+      if (!_isEmpty(selectedShiftList)) {
+        setCurrentShiftList(selectedShiftList.shifts);
+      } else {
+        const newShiftList = await addNewShiftList({
+          date: newCurrentDate,
+          groupId,
+        });
+        setCurrentShiftList(newShiftList.shifts);
+      }
+    }
+    setCurrentDate(newCurrentDate);
+    setShowCalendar(false);
+  };
 
   useEffect(() => {
     const loggedInCheck = async () => {
@@ -78,10 +109,9 @@ const App = () => {
       const groupId = await getGroupId();
       if (groupId) {
         const currentGroup = await getGroupByGroupId({ groupId });
-        if (currentGroup.groupName) {
+        if (!_isEmpty(currentGroup)) {
           try {
             setGroupName(currentGroup.groupName);
-            setShiftLists(currentGroup.shiftLists);
           } catch (e) {
             console.log(e);
           }
@@ -111,13 +141,14 @@ const App = () => {
                   <Text
                     style={styles.sectionTitle}
                     onPress={() =>
-                      Actions.shiftLists()
-                    }>{`${getCurrentDate()} Shifts`}</Text>
+                      setShowCalendar(true)
+                    }>{`${currentDate}`}</Text>
                 </View>
                 <View style={styles.sectionContent}>
                   <Text style={styles.sectionDescription}>Jerry Ku</Text>
                   <Text style={styles.sectionDescription}>7:30PM - 9PM</Text>
                 </View>
+                <Button title="New Shift" onPress={() => handleAddNewShift()} />
               </View>
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Notes</Text>
@@ -125,11 +156,22 @@ const App = () => {
                   <NotesContainer notes={notesArray} />
                 </View>
               </View>
-              <Button
-                title="New Shift List"
-                onPress={() => handleAddNewShiftList()}
-              />
               <Button title="Groups" onPress={() => Actions.groups()} />
+              <View style={styles.centeredView}>
+                <Modal
+                  animationType="slide"
+                  transparent={false}
+                  visible={showCalendar}
+                  onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                  }}>
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <CalendarPicker onDateChange={handleDateChange} />
+                    </View>
+                  </View>
+                </Modal>
+              </View>
             </View>
           ) : (
             <AuthPage setLoggedIn={setLoggedIn} />
@@ -190,6 +232,27 @@ const styles = StyleSheet.create({
     padding: 4,
     paddingRight: 12,
     textAlign: 'right',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: '50%',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
