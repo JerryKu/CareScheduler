@@ -1,4 +1,4 @@
-export interface AppleUser {
+export interface IAppleUser {
   firstName?: string | null;
   lastName?: string | null;
   email?: string | null;

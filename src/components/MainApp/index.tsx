@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,12 +16,17 @@ import {
   View,
   Text,
   StatusBar,
-  AsyncStorage,
+  Button,
 } from 'react-native';
 import HeaderBar from '@components/HeaderBar';
 import NotesContainer from '@components/NotesContainer';
+import AuthPage from '@components/AuthPage';
+import { getUserId, getGroupId } from '@utils/globalUtils';
+import _get from 'lodash/get';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Actions } from 'react-native-router-flux';
+import { getGroupByGroupId, addNewShiftList } from '@apis/apis';
 
 const notesArray = [
   {
@@ -36,18 +41,58 @@ const notesArray = [
   },
 ];
 
-const getUserInfo = async () => {
-  try {
-    let userData = await AsyncStorage.getItem('userData');
-    let data = JSON.parse(userData || '{}');
-    console.log(data);
-  } catch (error) {
-    console.log('Something went wrong', error);
+const getCurrentDate = () => {
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+
+  return month + '-' + day + '-' + year;
+};
+
+const handleAddNewShiftList = async () => {
+  const groupId = await getGroupId();
+  const date = getCurrentDate();
+  if (groupId) {
+    await addNewShiftList({ date, groupId });
+    Actions.shiftLists();
   }
 };
 
 const App = () => {
-  getUserInfo();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [shiftLists, setShiftLists] = useState([]);
+  const [currentShiftList, setCurrentShiftList] = useState({});
+
+  useEffect(() => {
+    const loggedInCheck = async () => {
+      const user = await getUserId();
+      setLoggedIn(!!user);
+    };
+    loggedInCheck();
+  }, []);
+
+  useEffect(() => {
+    const getGroupObject = async () => {
+      const groupId = await getGroupId();
+      if (groupId) {
+        const currentGroup = await getGroupByGroupId({ groupId });
+        if (currentGroup.groupName) {
+          try {
+            setGroupName(currentGroup.groupName);
+            setShiftLists(currentGroup.shiftLists);
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      } else {
+        Actions.group();
+      }
+    };
+    getGroupObject();
+  }, []);
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -56,36 +101,43 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <HeaderBar />
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Who's On Call</Text>
-                <Text style={styles.sectionTitle}>{getCurrentDate()}</Text>
+          {loggedIn ? (
+            <View style={styles.body}>
+              <View style={styles.sectionContainer}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>{groupName}</Text>
+                </View>
+                <View style={styles.sectionHeader}>
+                  <Text
+                    style={styles.sectionTitle}
+                    onPress={() =>
+                      Actions.shiftLists()
+                    }>{`${getCurrentDate()} Shifts`}</Text>
+                </View>
+                <View style={styles.sectionContent}>
+                  <Text style={styles.sectionDescription}>Jerry Ku</Text>
+                  <Text style={styles.sectionDescription}>7:30PM - 9PM</Text>
+                </View>
               </View>
-              <View style={styles.sectionContent}>
-                <Text style={styles.sectionDescription}>Jerry Ku</Text>
-                <Text style={styles.sectionDescription}>7:30PM - 9PM</Text>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Notes</Text>
+                <View style={styles.sectionContent}>
+                  <NotesContainer notes={notesArray} />
+                </View>
               </View>
+              <Button
+                title="New Shift List"
+                onPress={() => handleAddNewShiftList()}
+              />
+              <Button title="Groups" onPress={() => Actions.groups()} />
             </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Notes</Text>
-              <View style={styles.sectionContent}>
-                <NotesContainer notes={notesArray} />
-              </View>
-            </View>
-          </View>
+          ) : (
+            <AuthPage setLoggedIn={setLoggedIn} />
+          )}
         </ScrollView>
       </SafeAreaView>
     </>
   );
-};
-
-const getCurrentDate = () => {
-  const day = new Date().getDate();
-  const month = new Date().getMonth() + 1;
-  const year = new Date().getFullYear();
-
-  return month + '-' + day + '-' + year;
 };
 
 const styles = StyleSheet.create({

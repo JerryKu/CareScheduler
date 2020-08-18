@@ -13,15 +13,17 @@
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^1.1.2",
+    "@react-native-community/async-storage": "^1.11.0",
     "@react-native-community/checkbox": "^0.4.2",
+    "@types/lodash": "^4.14.159",
     "axios": "^0.19.2",
+    "lodash": "^4.17.20",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-reanimated": "^1.11.0",
     "react-native-router-flux": "^4.2.0",
-    "react-native-screens": "^2.10.1",
-    "realm": "^10.0.0-beta.9"
+    "react-native-screens": "^2.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
