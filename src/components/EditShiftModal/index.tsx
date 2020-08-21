@@ -2,20 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-community/picker';
-import moment from 'moment';
 import { IUser } from '@interfaces/User';
-import { getUsersInGroupApi, addNewShiftApi } from '@apis/apis';
-import { getGroupId, getShiftListId } from '@utils/globalUtils';
+import { getUsersInGroupApi, updateShiftApi } from '@apis/apis';
+import { getGroupId } from '@utils/globalUtils';
+import { IShift } from '@interfaces/Shift';
 
-const NewShiftModalContent = ({
-  setShowNewShiftModal,
+const EditShiftModalContent = ({
+  setShowEditShiftModal,
   setUpdateShiftListFlag,
+  editShiftState,
 }: {
-  setShowNewShiftModal: Function;
+  setShowEditShiftModal: Function;
   setUpdateShiftListFlag: Function;
+  editShiftState: IShift;
 }) => {
-  const [startDate, setStartDate] = useState(new Date(moment().format()));
-  const [endDate, setEndDate] = useState(new Date(moment().format()));
+  const { startTime, endTime, assigned, _id } = editShiftState;
+  const [startDate, setStartDate] = useState(new Date(startTime));
+  const [endDate, setEndDate] = useState(new Date(endTime));
   const [groupUsers, setGroupUsers] = useState([]);
   const [assignedUser, setAssignedUser] = useState<string | number>();
 
@@ -25,21 +28,21 @@ const NewShiftModalContent = ({
       if (groupId) {
         const groupUsersResponse = await getUsersInGroupApi({ groupId });
         setGroupUsers(groupUsersResponse);
+        setAssignedUser(assigned);
       }
     };
     getUsers();
-  }, []);
+  }, [assigned]);
 
-  const addNewShift = async () => {
+  const saveChanges = async () => {
     try {
-      const shiftListId = await getShiftListId();
-      if (shiftListId) {
-        await addNewShiftApi(shiftListId, {
+      if (_id) {
+        await updateShiftApi(_id, {
           startTime: startDate,
           endTime: endDate,
           assigned: assignedUser,
         });
-        setShowNewShiftModal(false);
+        setShowEditShiftModal(false);
         setUpdateShiftListFlag(true);
       }
     } catch (e) {
@@ -48,15 +51,15 @@ const NewShiftModalContent = ({
   };
 
   return (
-    <View style={styles.newShiftModalContent}>
+    <View style={styles.EditShiftModalContent}>
+      <TouchableOpacity
+        style={styles.closeButtonArea}
+        onPress={() => {
+          setShowEditShiftModal(false);
+        }}>
+        <Text style={styles.closeButton}>X</Text>
+      </TouchableOpacity>
       <View>
-        <TouchableOpacity
-          style={styles.closeButtonArea}
-          onPress={() => {
-            setShowNewShiftModal(false);
-          }}>
-          <Text style={styles.closeButton}>X</Text>
-        </TouchableOpacity>
         <Text style={styles.formHeader}>Assigned to: </Text>
         <Picker
           style={styles.picker}
@@ -64,7 +67,7 @@ const NewShiftModalContent = ({
           onValueChange={(itemValue) => {
             setAssignedUser(itemValue);
           }}>
-          <Picker.Item key="None" label="No One" value="" />
+          <Picker.Item key="" label="No One" value="" />
           {groupUsers.map((user: IUser) => {
             return (
               <Picker.Item
@@ -103,9 +106,9 @@ const NewShiftModalContent = ({
         />
       </View>
       <Button
-        title="Add New Shift"
+        title="Save Changes"
         onPress={() => {
-          addNewShift();
+          saveChanges();
         }}
       />
     </View>
@@ -113,7 +116,7 @@ const NewShiftModalContent = ({
 };
 
 const styles = StyleSheet.create({
-  newShiftModalContent: {
+  EditShiftModalContent: {
     width: 200,
     position: 'relative',
   },
@@ -135,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewShiftModalContent;
+export default EditShiftModalContent;

@@ -162,7 +162,7 @@ export const getShiftsByShiftListIdApi = async ({
     }
   } catch (e) {
     console.log(e);
-    return {};
+    return [];
   }
 };
 
@@ -181,6 +181,27 @@ export const addNewShiftApi = async (
       return res.data;
     } else {
       throw new Error('Error Adding New Shift');
+    }
+  } catch (e) {
+    console.log('Error: ', e);
+  }
+};
+
+export const updateShiftApi = async (
+  shiftId: string | number,
+  { endTime, startTime, assigned }: IShift,
+) => {
+  try {
+    const res = await axios.put(`/Shift/${shiftId}`, {
+      startTime,
+      endTime,
+      assigned,
+    });
+    if (res.data) {
+      console.log(res.data);
+      return res.data;
+    } else {
+      throw new Error('Error Updating Shift');
     }
   } catch (e) {
     console.log('Error: ', e);

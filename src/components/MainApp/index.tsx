@@ -24,6 +24,7 @@ import NotesContainer from '@components/NotesContainer';
 import ShiftsContainer from '@components/ShiftsContainer';
 import AuthPage from '@components/AuthPage';
 import NewShiftModal from '@components/NewShiftModal';
+import EditShiftModal from '@components/EditShiftModal';
 import CalendarPicker from 'react-native-calendar-picker';
 import moment, { Moment } from 'moment';
 import { getUserId, getGroupId, getShiftListId } from '@utils/globalUtils';
@@ -36,6 +37,7 @@ import {
 } from '@apis/apis';
 import _isEmpty from 'lodash/isEmpty';
 import AsyncStorage from '@react-native-community/async-storage';
+import { IShift } from '@interfaces/Shift';
 
 const notesArray = [
   {
@@ -54,11 +56,13 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showNewShiftModal, setShowNewShiftModal] = useState<boolean>(false);
+  const [showNewShiftModal, setShowNewShiftModal] = useState(false);
   const [currentDate, setCurrentDate] = useState(moment().format('l'));
-  const [updateShiftListFlag, setUpdateShiftListFlag] = useState(false);
+  const [updateShiftListFlag, setUpdateShiftListFlag] = useState(true);
+  const [showEditShiftModal, setShowEditShiftModal] = useState(false);
+  const [editShiftState, setEditShiftState] = useState<IShift>();
 
-  const handleAddNewShift = async () => {
+  const handleAddNewShift = () => {
     setShowNewShiftModal(true);
   };
 
@@ -163,6 +167,8 @@ const App = () => {
                 <Text style={styles.sectionTitle}>Shifts</Text>
                 <View style={styles.sectionContent}>
                   <ShiftsContainer
+                    setEditShiftState={setEditShiftState}
+                    setShowEditShiftModal={setShowEditShiftModal}
                     updateShiftListFlag={updateShiftListFlag}
                     setUpdateShiftListFlag={setUpdateShiftListFlag}
                   />
@@ -195,6 +201,20 @@ const App = () => {
                     <View style={styles.modalView}>
                       <NewShiftModal
                         setShowNewShiftModal={setShowNewShiftModal}
+                        setUpdateShiftListFlag={setUpdateShiftListFlag}
+                      />
+                    </View>
+                  </View>
+                </Modal>
+                <Modal
+                  animationType="slide"
+                  transparent={false}
+                  visible={showEditShiftModal}>
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <EditShiftModal
+                        editShiftState={editShiftState}
+                        setShowEditShiftModal={setShowEditShiftModal}
                         setUpdateShiftListFlag={setUpdateShiftListFlag}
                       />
                     </View>

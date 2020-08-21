@@ -45,11 +45,9 @@ class NotesContainer extends Component<NoteContainerProps, State> {
             {...note}
             onFocus={() => {
               setEditingState(index, true);
-              console.log('focus');
             }}
             onBlur={() => {
               setEditingState(index, false);
-              console.log('blur');
             }}
           />
         ))}
