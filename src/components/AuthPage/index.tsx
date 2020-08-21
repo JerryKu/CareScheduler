@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getOrCreateNewAppleUser } from '@apis/apis';
+import { getOrCreateNewAppleUserApi } from '@apis/apis';
 import appleAuth, {
   AppleButton,
   AppleAuthRequestOperation,
@@ -24,7 +24,7 @@ async function signInWithApple(): Promise<void> {
   if (credentialState === AppleAuthCredentialState.AUTHORIZED) {
     try {
       const { fullName, email, user, identityToken } = appleAuthRequestResponse;
-      const userData = await getOrCreateNewAppleUser({
+      const userData = await getOrCreateNewAppleUserApi({
         firstName: (fullName && fullName.givenName) || null,
         lastName: (fullName && fullName.familyName) || null,
         appleUserId: user,

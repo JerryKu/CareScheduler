@@ -10,6 +10,12 @@ export const getUserData = async () => {
   return user;
 };
 export const getGroupId = async () => {
-  const selectedGroup = (await AsyncStorage.getItem('groupId')) || undefined;
-  return selectedGroup;
+  const selectedGroupId = (await AsyncStorage.getItem('groupId')) || undefined;
+  return selectedGroupId;
+};
+
+export const getShiftListId = async () => {
+  const selectedShiftList =
+    (await AsyncStorage.getItem('shiftListId')) || undefined;
+  return selectedShiftList;
 };

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { IAppleUser } from '@interfaces/AppleUser';
-import { IShiftList } from '@interfaces/Shift';
+import { IAppleUser } from '@interfaces/User';
+import { IShiftList, IShift } from '@interfaces/Shift';
 
-export const getOrCreateNewAppleUser = async ({
+export const getOrCreateNewAppleUserApi = async ({
   firstName,
   lastName,
   email,
@@ -27,7 +27,8 @@ export const getOrCreateNewAppleUser = async ({
   }
 };
 
-export const getUsersGroupListByUserId = async ({
+// Get all group lists that a user is in
+export const getUsersGroupListByUserIdApi = async ({
   userId,
 }: {
   userId: string;
@@ -40,12 +41,46 @@ export const getUsersGroupListByUserId = async ({
       throw new Error('Error getting Group List By UserId');
     }
   } catch (e) {
-    console.log(e);
     return {};
   }
 };
 
-export const getGroupByGroupId = async ({ groupId }: { groupId: string }) => {
+// Get all users Ids in a Group
+export const getUsersInGroupApi = async ({ groupId }: { groupId: string }) => {
+  try {
+    const res = await axios.get(`/User/group/${groupId}`);
+    if (res.data) {
+      return res.data;
+    } else {
+      throw new Error('Error getting Users in Group');
+    }
+  } catch (e) {
+    return [];
+  }
+};
+
+export const getUserObjByUserIdApi = async ({
+  userId,
+}: {
+  userId: string | number;
+}) => {
+  try {
+    const res = await axios.get(`/User/${userId}`);
+    if (res.data) {
+      return res.data;
+    } else {
+      throw new Error('Error getting Users in Group');
+    }
+  } catch (e) {
+    return [];
+  }
+};
+
+export const getGroupByGroupIdApi = async ({
+  groupId,
+}: {
+  groupId: string;
+}) => {
   try {
     const res = await axios.get(`/Group/${groupId}`);
     if (res.data) {
@@ -59,7 +94,7 @@ export const getGroupByGroupId = async ({ groupId }: { groupId: string }) => {
   }
 };
 
-export const addNewShiftList = async ({ date, groupId }: IShiftList) => {
+export const addNewShiftListApi = async ({ date, groupId }: IShiftList) => {
   try {
     const res = await axios.post('/ShiftList', {
       date,
@@ -75,7 +110,7 @@ export const addNewShiftList = async ({ date, groupId }: IShiftList) => {
   }
 };
 
-export const getShiftListsByGroupId = async ({
+export const getShiftListsByGroupIdApi = async ({
   groupId,
 }: {
   groupId: string;
@@ -93,7 +128,7 @@ export const getShiftListsByGroupId = async ({
   }
 };
 
-export const getShiftListByGroupIdAndDate = async ({
+export const getShiftListByGroupIdAndDateApi = async ({
   groupId,
   date,
 }: {
@@ -110,5 +145,44 @@ export const getShiftListByGroupIdAndDate = async ({
   } catch (e) {
     console.log(e);
     return {};
+  }
+};
+
+export const getShiftsByShiftListIdApi = async ({
+  shiftListId,
+}: {
+  shiftListId: string;
+}) => {
+  try {
+    const res = await axios.get(`/Shift/shiftList/${shiftListId}`);
+    if (res.data) {
+      return res.data;
+    } else {
+      throw new Error('Error getting Group By Id');
+    }
+  } catch (e) {
+    console.log(e);
+    return {};
+  }
+};
+
+export const addNewShiftApi = async (
+  shiftListId: string,
+  { endTime, startTime, assigned }: IShift,
+) => {
+  try {
+    const res = await axios.post('/Shift', {
+      shiftListId,
+      endTime,
+      startTime,
+      assigned,
+    });
+    if (res.data) {
+      return res.data;
+    } else {
+      throw new Error('Error Adding New Shift');
+    }
+  } catch (e) {
+    console.log('Error: ', e);
   }
 };

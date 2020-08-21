@@ -1,30 +1,34 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import Shift, { ShiftProps } from '../Shift';
+import Shift from '@components/Shift';
+import { getShiftListId } from '../../utils/globalUtils';
+import { getShiftsByShiftListIdApi } from '@apis/apis';
+import { IShift } from '@interfaces/Shift';
 
-type ShiftContainerProps = {
-  shiftArray: Array<ShiftProps>;
+const ShiftsContainer = () => {
+  const [shifts, setShifts] = useState<IShift[]>([]);
+  useEffect(() => {
+    const loadShifts = async () => {
+      const shiftListId = await getShiftListId();
+      if (shiftListId) {
+        const currentShifts = await getShiftsByShiftListIdApi({ shiftListId });
+        setShifts(currentShifts);
+      }
+    };
+    loadShifts();
+  }, []);
+
+  return (
+    <View style={styles.shiftsContainer}>
+      {shifts.map((shift) => (
+        <Shift key={shift._id} {...shift} />
+      ))}
+    </View>
+  );
 };
 
-type State = {};
-
-class ShiftsContainer extends Component<ShiftContainerProps, State> {
-  state = {};
-
-  render() {
-    const { shiftArray } = this.props;
-    return (
-      <View style={styles.notesContainer}>
-        {shiftArray.map((shift, index) => (
-          <Shift {...shift} />
-        ))}
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
-  notesContainer: {},
+  shiftsContainer: {},
 });
 
 export default ShiftsContainer;

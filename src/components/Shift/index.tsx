@@ -1,64 +1,48 @@
-import React, { useState } from 'react';
-import { bool, string, func } from 'prop-types';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { IShift } from '@interfaces/Shift';
+import moment from 'moment';
+import { getUserObjByUserIdApi } from '@apis/apis';
 
-export type ShiftProps = {
-  checked?: boolean;
-  text: string;
-  isEditing?: boolean;
-  onFocus?: Function;
-  onBlur?: Function;
-};
+const Shift = ({ endTime, startTime, assigned }: IShift) => {
+  const [assignedName, setAssignedName] = useState('');
 
-const Shift = ({
-  text,
-  isEditing = false,
-  onFocus = () => {},
-  onBlur = () => {},
-}: ShiftProps) => {
-  const [currentText, onChangeText] = useState(text);
+  useEffect(() => {
+    const grabUserInfo = async () => {
+      if (assigned) {
+        const user = await getUserObjByUserIdApi({ userId: assigned });
+        if (user) {
+          setAssignedName(`${user.firstName} ${user.lastName}`);
+        }
+      }
+    };
+    grabUserInfo();
+  }, [assigned]);
 
   return (
-    <View style={styles.note}>
-      <Text
-        style={styles.noteText}
-        onPress={() => {
-          onFocus();
-        }}>
-        {currentText}
-      </Text>
+    <View style={styles.shift}>
+      <Text style={styles.shiftText}>{assignedName}</Text>
+      <Text style={styles.shiftText}>{`${moment(startTime).format(
+        'LT',
+      )} - ${moment(endTime).format('LT')}`}</Text>
     </View>
   );
 };
 
-Shift.propTypes = {
-  text: string.isRequired,
-  checked: bool.isRequired,
-  isEditing: bool,
-  onFocus: func,
-};
-
-Shift.defaultProps = {
-  isEditing: false,
-  onFocus: () => {},
-};
-
 const styles = StyleSheet.create({
-  note: {
-    display: 'flex',
+  shift: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    padding: 10,
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    backgroundColor: 'lightgrey',
   },
-  checkBox: {
-    marginRight: 10,
-  },
-  noteText: {
-    fontSize: 20,
-  },
-  focusedText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  shiftText: {
+    fontSize: 18,
+    fontWeight: '400',
   },
 });
 

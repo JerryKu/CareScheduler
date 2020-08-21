@@ -7,7 +7,7 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
-import { getUsersGroupListByUserId } from '@apis/apis';
+import { getUsersGroupListByUserIdApi } from '@apis/apis';
 import { getUserId } from '@utils/globalUtils';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -15,7 +15,7 @@ import GroupList from '@components/GroupList';
 
 const getGroupList = async () => {
   const userId = await getUserId();
-  const groupsList = await getUsersGroupListByUserId({ userId });
+  const groupsList = await getUsersGroupListByUserIdApi({ userId });
   return groupsList;
 };
 
