@@ -56,6 +56,7 @@ const App = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showNewShiftModal, setShowNewShiftModal] = useState<boolean>(false);
   const [currentDate, setCurrentDate] = useState(moment().format('l'));
+  const [updateShiftListFlag, setUpdateShiftListFlag] = useState(false);
 
   const handleAddNewShift = async () => {
     setShowNewShiftModal(true);
@@ -71,12 +72,14 @@ const App = () => {
       });
       if (!_isEmpty(selectedShiftList)) {
         await AsyncStorage.setItem('shiftListId', selectedShiftList._id);
+        setUpdateShiftListFlag(true);
       } else {
         const newShiftList = await addNewShiftListApi({
           date: newCurrentDate,
           groupId,
         });
         await AsyncStorage.setItem('shiftListId', newShiftList._id);
+        setUpdateShiftListFlag(true);
       }
     }
     setCurrentDate(newCurrentDate);
@@ -120,12 +123,14 @@ const App = () => {
         });
         if (!_isEmpty(todaysShiftList)) {
           await AsyncStorage.setItem('shiftListId', todaysShiftList._id);
+          setUpdateShiftListFlag(true);
         } else {
           const newShiftList = await addNewShiftListApi({
             date: todaysDate,
             groupId,
           });
           await AsyncStorage.setItem('shiftListId', newShiftList._id);
+          setUpdateShiftListFlag(true);
         }
       }
     };
@@ -157,7 +162,10 @@ const App = () => {
                 </View>
                 <Text style={styles.sectionTitle}>Shifts</Text>
                 <View style={styles.sectionContent}>
-                  <ShiftsContainer />
+                  <ShiftsContainer
+                    updateShiftListFlag={updateShiftListFlag}
+                    setUpdateShiftListFlag={setUpdateShiftListFlag}
+                  />
                 </View>
                 <Button title="New Shift" onPress={() => handleAddNewShift()} />
               </View>
@@ -187,6 +195,7 @@ const App = () => {
                     <View style={styles.modalView}>
                       <NewShiftModal
                         setShowNewShiftModal={setShowNewShiftModal}
+                        setUpdateShiftListFlag={setUpdateShiftListFlag}
                       />
                     </View>
                   </View>

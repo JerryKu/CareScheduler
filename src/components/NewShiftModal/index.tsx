@@ -9,8 +9,10 @@ import { getGroupId, getShiftListId } from '@utils/globalUtils';
 
 const NewShiftModalContent = ({
   setShowNewShiftModal,
+  setUpdateShiftListFlag,
 }: {
   setShowNewShiftModal: Function;
+  setUpdateShiftListFlag: Function;
 }) => {
   const [startDate, setStartDate] = useState(new Date(moment().format()));
   const [endDate, setEndDate] = useState(new Date(moment().format()));
@@ -38,6 +40,7 @@ const NewShiftModalContent = ({
           assigned: assignedUser,
         });
         setShowNewShiftModal(false);
+        setUpdateShiftListFlag(true);
       }
     } catch (e) {
       console.log(e);

@@ -5,7 +5,13 @@ import { getShiftListId } from '../../utils/globalUtils';
 import { getShiftsByShiftListIdApi } from '@apis/apis';
 import { IShift } from '@interfaces/Shift';
 
-const ShiftsContainer = () => {
+const ShiftsContainer = ({
+  updateShiftListFlag,
+  setUpdateShiftListFlag,
+}: {
+  updateShiftListFlag: boolean;
+  setUpdateShiftListFlag: Function;
+}) => {
   const [shifts, setShifts] = useState<IShift[]>([]);
   useEffect(() => {
     const loadShifts = async () => {
@@ -15,8 +21,11 @@ const ShiftsContainer = () => {
         setShifts(currentShifts);
       }
     };
-    loadShifts();
-  }, []);
+    if (updateShiftListFlag) {
+      loadShifts();
+      setUpdateShiftListFlag(false);
+    }
+  }, [updateShiftListFlag, setUpdateShiftListFlag]);
 
   return (
     <View style={styles.shiftsContainer}>
